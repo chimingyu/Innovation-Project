@@ -1,0 +1,39 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Apr 07 17:01:39 2016
+
+@author: Administrator
+"""
+
+import requests
+import json
+
+def showCookies(cookies):
+    print('; '.join(['='.join(item) for item in cookies.items()]))
+
+def getCaptchaUrl(res):
+    code = res.text.split(':')[1].split('"')[1]    
+    return 'https://account.ele.me/restapi/v1/captchas' + '/' + code
+    
+def downLoadCaptcha(res):
+    eleme_captcha = s.get(getCaptchaUrl(res),stream = True)
+    f = open('D://elemecaptcha2.jpeg', 'wb') 
+    for line in eleme_captcha.iter_content(10): 
+        f.write(line) 
+    f.close()
+ 
+s = requests.session()
+home_url = 'https://account.ele.me/login'
+base_headers = {
+'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0',
+'Connection': 'keep-alive'
+}
+res = s.post('https://account.ele.me/restapi/v1/captchas')
+_cookies = res.cookies
+downLoadCaptcha(res)
+captcha = raw_input('captcha:')
+login_data ={"captcha_code":captcha,"username":***,"password":***}
+
+res = s.post('https://account.ele.me/restapi/v1/login',data = json.dumps(login_data),headers = base_headers,cookies = _cookies)
+_cookies = res.cookies
+print res.status_code
